@@ -4,7 +4,7 @@
 입력: {"title","subtitle","sections":[{"name","rows":[{"n","q","a","c","v","note"}]}],"review":["..."]}
   v는 ○ △ ✕ 중 하나. 글 안의 **굵게**는 <b>로 바뀐다. 점수는 v를 세어 계산한다.
 """
-import html, json, re, sys
+import html, json, os, re, sys
 from datetime import date
 
 CSS = """:root{--bg:#fafaf7;--fg:#1f2328;--muted:#656d76;--line:#d8dce0;--card:#fff;--ok:#1a7f37;--ok-bg:#dafbe1;--mid:#9a6700;--mid-bg:#fff8c5;--no:#cf222e;--no-bg:#ffebe9}
@@ -69,6 +69,10 @@ def render(d):
 
 if __name__ == "__main__":
     out = sys.argv[1] if len(sys.argv) > 1 else f"quiz-result-{date.today():%Y%m%d}.html"
+    base, ext = os.path.splitext(out)
+    n = 2
+    while os.path.exists(out):  # 이전 결과를 덮어쓰지 않는다
+        out, n = f"{base}-{n}{ext}", n + 1
     data = json.loads(sys.stdin.buffer.read().decode("utf-8"))
     with open(out, "w", encoding="utf-8") as f:
         f.write(render(data))
